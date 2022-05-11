@@ -1,0 +1,75 @@
+What is Kafka
+#############
+Distributed streaming platform
+
+Kafka cluster consists of Kafka brokers.
+Zookeper montiors kafka brokers. All broker send heartbeats to zookeeper.
+Kafka brokers are combination of topics.
+Topics can contain multiple partions.
+
+Kafka producer consist a layer named as partioner, which determines to which partition the message should travel in Kafka broker.
+Kafka consumer uses pull loop across brokers. Client call goes to leader of the partion of the topic.
+
+Kafka handels data loss using replication. The topics are distributed accross all brokers and partions.
+
+Producer got embeddedkafka for testing.
+
+Start Kafka
+###########
+Go to bin>windows folder and run below commands:
+
+Start Zookeper
+--------------
+zookeeper-server-start.bat ..\..\config\zookeeper.properties
+
+Start Kafka Broker
+------------------
+kafka-server-start.bat ..\..\config\server.properties
+
+Create topic
+------------
+kafka-topics.bat --create --topic test-topic --replication-factor 1 --partitions 4 --bootstrap-server localhost:9092
+
+Instantiate a Console Producer
+------------------------------
+kafka-console-producer.bat --broker-list localhost:9092 --topic test-topic   (without key)
+kafka-console-producer.bat --broker-list localhost:9092 --topic test-topic --property "key.separator=-" --property "parse.key=true"  (with key - to maintain order and partions)
+
+Example > A-Apple
+
+Instantiate a Console Consumer
+------------------------------
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-topic --from-beginning   (without key)
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-topic --from-beginning -property "key.separator= - " --property "print.key=true"  (with key - to maintain order and partions)
+
+List the topics in a cluster
+----------------------------
+kafka-topics.bat --bootstrap-server localhost:9092 --list
+__consumer_offset is by default to track where consumer has let off
+
+View consumer groups
+--------------------
+kafka-consumer-groups.bat --bootstrap-server localhost:9092 --list
+
+Instantiate a Console Consumer (with group - to split partions between multiple consumer)
+-----------------------------------------------------------------------------------------
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-topic --group <group-name>
+
+Viewing commit log
+------------------
+kafka-run-class.bat kafka.tools.DumpLogSegments --deep-iteration --files /tmp/kafka-logs/test-topic-0/00000000000000000000.log
+
+Server.properties > log.retention.hours = 768 (7days)
+
+Set up multiple broker
+----------------------
+copy and edit config/server.properties
+
+broker.id=<unique-broker-id>
+listeners=PLAINTEXT://localhost:<unique-port>
+log.dirs=/tmp/<unique-kafka-folder>
+
+Describe topic
+--------------
+kafka-topics.bat --bootstrap-server localhost:9092 --describe
+kafka-topics.bat --bootstrap-server localhost:9092 --describe --topic <topic-name>  (Specific topic)
