@@ -1,8 +1,9 @@
-/*
 package com.learnkafka.demokafkaConsumer.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.learnkafka.demokafkaConsumer.entity.LibraryEvent;
+import com.learnkafka.demokafkaConsumer.jpa.LibraryEventsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,11 @@ public class LibraryEventsService {
 
         switch(libraryEvent.getLibraryEventType()){
             case NEW:
+                //save operation
                 save(libraryEvent);
                 break;
             case UPDATE:
+                //update operation
                 //validate the libraryevent
                 validate(libraryEvent);
                 save(libraryEvent);
@@ -51,7 +54,7 @@ public class LibraryEventsService {
 
     }
 
-    private void validate(LibraryEvent libraryEvent) {
+    private void    validate(LibraryEvent libraryEvent) {
         if(libraryEvent.getLibraryEventId()==null){
             throw new IllegalArgumentException("Library Event Id is missing");
         }
@@ -100,4 +103,4 @@ public class LibraryEventsService {
     private void handleSuccess(Integer key, String value, SendResult<Integer, String> result) {
         log.info("Message Sent SuccessFully for the key : {} and the value is {} , partition is {}", key, value, result.getRecordMetadata().partition());
     }
-}*/
+}
