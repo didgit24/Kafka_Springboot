@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,5 +38,19 @@ public class LibraryEventsController {
         //SendResult<Integer,String> sendResult = libraryEventProducer.sendLibraryEventSynchronous(libraryEvent);
         //log.info("sendResult is {}", sendResult.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(libraryEvent);
+    }
+
+    @PutMapping("v1/libraryevent")
+    public ResponseEntity<?> putLibraryEvent(@RequestBody @Validated LibraryEvent libraryEvent) throws JsonProcessingException, ExecutionException, InterruptedException, TimeoutException {
+        //approach2
+        if (libraryEvent.getLibraryEventId() == null)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide libraryEventId.");
+        }
+        //invoke kafka producer
+        libraryEvent.setLibraryEventType(LibraryEventType.UPDATE);
+        libraryEventProducer.sendLibraryEvent_Approach2(libraryEvent);
+
+        return ResponseEntity.status(HttpStatus.OK).body(libraryEvent);
     }
 }

@@ -14,6 +14,8 @@ Kafka handels data loss using replication. The topics are distributed accross al
 
 Producer got embeddedkafka for testing.
 
+
+
 Start Kafka
 ###########
 Go to bin>windows folder and run below commands:
@@ -73,3 +75,25 @@ Describe topic
 --------------
 kafka-topics.bat --bootstrap-server localhost:9092 --describe
 kafka-topics.bat --bootstrap-server localhost:9092 --describe --topic <topic-name>  (Specific topic)
+
+
+Producer configurations
+#######################
+acks- 
+acks = 0, No guranteed
+acks = 1 , Generated message is written to leader
+acks = all, Generated message written to leader and all the replicas
+
+retries -> 2147483647
+retry.backoff.ms -> 100ms
+
+Consumer configurations
+#######################
+Three types -
+1) KafkaMessageListenerContainer - Single threaded
+2) ConcurrentMessageListenerContainer - Multiple KafkaMessageListenerContainer
+3) @KafkaListener - Uses ConcurrentMessageListenerContainer behind the scene. 
+
+Group co-ordinator checks for consumer instances and rebalance. Its assigns partions to different instances.
+
+After poll() helps consuming message consumer updates/commits _consuming_offset, so consumer doesn't read same record.
